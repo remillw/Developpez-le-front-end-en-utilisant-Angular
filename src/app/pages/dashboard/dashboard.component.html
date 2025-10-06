@@ -1,11 +1,33 @@
 <div class="dashboard-container">
   <div class="header">
-    <h1 class="title">Médailles par pays</h1>
+    <h1 class="title">Medals per Country</h1>
+    <div class="statistics">
+      <div class="stat-box">
+        <div class="stat-label">Number of JOs</div>
+        <div class="stat-value">{{ totalJOs }}</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-label">Number of countries</div>
+        <div class="stat-value">{{ totalCountries }}</div>
+      </div>
+    </div>
   </div>
 
   <div class="content">
-    <div class="chart-container">
-      <canvas #chartCanvas></canvas>
+    <div class="chart-container" *ngIf="chartData.length > 0">
+      <ngx-charts-pie-chart
+        [results]="chartData"
+        [view]="[800, 600]"
+        [legend]="true"
+        [labels]="true"
+        [doughnut]="false"
+        [scheme]="colorScheme"
+        [tooltipText]="tooltipText"
+        (select)="onSelect($event)">
+      </ngx-charts-pie-chart>
+    </div>
+    <div *ngIf="chartData.length === 0">
+      Loading data...
     </div>
   </div>
 </div>
