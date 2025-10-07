@@ -17,7 +17,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
   public colorScheme: any = {
     domain: ['#956065', '#B8CBE7', '#89A1DB', '#793D52', '#9780A1']
   };
-  
+  public isLoading: boolean = true;
+  public errorMessage: string | null = null;
+
   private destroy$ = new Subject<void>();
 
   constructor(
@@ -28,15 +30,32 @@ export class DashboardComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.olympicService.loadInitialData()
       .pipe(takeUntil(this.destroy$))
-      .subscribe();
-      
+      .subscribe({
+        error: (error) => {
+          console.error('Error loading Olympic data:', error);
+          this.errorMessage = 'Unable to load Olympic data. Please check your internet connection and try again.';
+          this.isLoading = false;
+        }
+      });
+
     this.olympicService.getOlympics()
       .pipe(takeUntil(this.destroy$))
-      .subscribe((data) => {
-        if (data) {
-          this.olympics = data;
-          this.prepareChartData();
-          this.calculateStatistics();
+      .subscribe({
+        next: (data) => {
+          if (data && data.length > 0) {
+            this.olympics = data;
+            this.prepareChartData();
+            this.calculateStatistics();
+            this.isLoading = false;
+          } else {
+            this.errorMessage = 'No Olympic data available.';
+            this.isLoading = false;
+          }
+        },
+        error: (error) => {
+          console.error('Error fetching Olympic data:', error);
+          this.errorMessage = 'An error occurred while loading the data. Please try again later.';
+          this.isLoading = false;
         }
       });
   }
