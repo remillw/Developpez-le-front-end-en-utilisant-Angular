@@ -1,0 +1,57 @@
+<div class="country-detail-container">
+  <div class="back-button-container">
+    <button class="back-button" (click)="goBack()">
+      ← Back
+    </button>
+  </div>
+
+  <div class="loading-container" *ngIf="isLoading && !errorMessage">
+    <div class="loader"></div>
+    <p>Loading country data...</p>
+  </div>
+
+  <div class="error-container" *ngIf="errorMessage">
+    <div class="error-icon">⚠️</div>
+    <h2>Something went wrong</h2>
+    <p>{{ errorMessage }}</p>
+    <button class="retry-button" (click)="goBack()">Go back to Dashboard</button>
+  </div>
+
+  <div class="content" *ngIf="!isLoading && !errorMessage && country">
+    <div class="header">
+      <h1 class="title">{{ country.country }}</h1>
+      <div class="statistics">
+        <div class="stat-box">
+          <div class="stat-label">Number of entries</div>
+          <div class="stat-value">{{ numberOfEntries }}</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">Total number medals</div>
+          <div class="stat-value">{{ totalMedals }}</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">Total number of athletes</div>
+          <div class="stat-value">{{ totalAthletes }}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="chart-section">
+      <h2 class="chart-title">Medals</h2>
+      <div class="chart-container" *ngIf="chartData.length > 0">
+        <ngx-charts-line-chart
+          [results]="chartData"
+          [view]="[900, 400]"
+          [xAxis]="true"
+          [yAxis]="true"
+          [legend]="false"
+          [showXAxisLabel]="true"
+          [showYAxisLabel]="false"
+          [xAxisLabel]="'Dates'"
+          [timeline]="false"
+          [autoScale]="true">
+        </ngx-charts-line-chart>
+      </div>
+    </div>
+  </div>
+</div>
