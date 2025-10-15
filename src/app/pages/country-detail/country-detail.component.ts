@@ -36,29 +36,29 @@ export class CountryDetailComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.olympicService.getOlympics()
+    // Charger les données d'abord si elles ne sont pas disponibles
+    this.olympicService.loadInitialData()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (olympics) => {
-          if (olympics && olympics.length > 0) {
-            this.country = olympics.find(o => o.id === Number(countryId)) || null;
-
-            if (this.country) {
-              this.prepareChartData();
-              this.calculateStatistics();
-              this.isLoading = false;
-            } else {
-              this.errorMessage = 'Country not found.';
-              this.isLoading = false;
-            }
-          } else {
-            this.errorMessage = 'No Olympic data available.';
-            this.isLoading = false;
-          }
+        next: () => {
+          // Ensuite récupérer le pays spécifique
+          this.olympicService.getCountryById(Number(countryId))
+            .pipe(takeUntil(this.destroy$))
+            .subscribe({
+              next: (country) => {
+                this.country = country;
+                this.prepareChartData();
+                this.calculateStatistics();
+                this.isLoading = false;
+              },
+              error: (err) => {
+                this.errorMessage = err.message;
+                this.isLoading = false;
+              }
+            });
         },
-        error: (error) => {
-          console.error('Error fetching country data:', error);
-          this.errorMessage = 'An error occurred while loading the country data. Please try again later.';
+        error: () => {
+          this.errorMessage = 'Unable to load Olympic data. Please check your internet connection and try again.';
           this.isLoading = false;
         }
       });

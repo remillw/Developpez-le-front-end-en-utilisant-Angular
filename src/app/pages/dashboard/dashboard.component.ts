@@ -55,8 +55,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
               }
             });
         },
-        error: (error) => {
-          console.error('Error loading Olympic data:', error);
+        error: () => {
           this.errorMessage = 'Unable to load Olympic data. Please check your internet connection and try again.';
           this.isLoading = false;
         }
