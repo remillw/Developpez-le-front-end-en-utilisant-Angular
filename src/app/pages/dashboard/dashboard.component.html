@@ -14,7 +14,18 @@
   </div>
 
   <div class="content">
-    <div class="chart-container" *ngIf="chartData.length > 0">
+    <div class="loading-container" *ngIf="isLoading && !errorMessage">
+      <div class="loader"></div>
+      <p>Loading Olympic data...</p>
+    </div>
+
+    <div class="error-container" *ngIf="errorMessage">
+      <div class="error-icon">⚠️</div>
+      <h2>Oops! Something went wrong</h2>
+      <p>{{ errorMessage }}</p>
+    </div>
+
+    <div class="chart-container" *ngIf="!isLoading && !errorMessage && chartData.length > 0">
       <ngx-charts-pie-chart
         [results]="chartData"
         [view]="[800, 600]"
@@ -25,9 +36,6 @@
         [tooltipText]="tooltipText"
         (select)="onSelect($event)">
       </ngx-charts-pie-chart>
-    </div>
-    <div *ngIf="chartData.length === 0">
-      Loading data...
     </div>
   </div>
 </div>
